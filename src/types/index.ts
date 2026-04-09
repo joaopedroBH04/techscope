@@ -29,6 +29,9 @@ export interface Job {
   postedAt: string
   description: string
   hot: boolean
+  applyUrl: string
+  benefits: string[]
+  requirements: string[]
 }
 
 export interface SalaryData {

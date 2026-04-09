@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react'
-import { Search, MapPin, Building2, Briefcase, Filter, X, Flame, ExternalLink } from 'lucide-react'
+import { useState, useMemo, useCallback } from 'react'
+import { Search, MapPin, Building2, Briefcase, Filter, X, Flame, ExternalLink, Bookmark, BookmarkCheck, Clock, Users, TrendingUp } from 'lucide-react'
 import { Badge } from '../components/ui/Badge'
+import { JobDetailModal } from '../components/jobs/JobDetailModal'
 import { jobs } from '../data/jobs'
-import type { TechArea, Seniority, WorkModel } from '../types'
+import type { Job, TechArea, Seniority, WorkModel } from '../types'
 import clsx from 'clsx'
 
 const areas: TechArea[] = ['Dados & BI', 'Inteligência Artificial', 'Machine Learning', 'DevOps & Cloud', 'Backend', 'Frontend', 'Segurança', 'Engenharia de Software']
@@ -13,6 +14,13 @@ function fmtSalary(n: number) {
   return `R$ ${(n / 1000).toFixed(0)}k`
 }
 
+function daysAgo(date: string) {
+  const diff = Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24))
+  if (diff === 0) return 'Hoje'
+  if (diff === 1) return 'Ontem'
+  return `${diff}d atrás`
+}
+
 export function Jobs() {
   const [search, setSearch] = useState('')
   const [selectedArea, setSelectedArea] = useState<TechArea | 'Todas'>('Todas')
@@ -20,6 +28,23 @@ export function Jobs() {
   const [selectedModel, setSelectedModel] = useState<WorkModel | 'Todos'>('Todos')
   const [showFilters, setShowFilters] = useState(false)
   const [sortBy, setSortBy] = useState<'recente' | 'salario'>('recente')
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null)
+  const [savedJobs, setSavedJobs] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('techscope-saved-jobs')
+      return stored ? new Set(JSON.parse(stored)) : new Set()
+    } catch { return new Set() }
+  })
+
+  const toggleSave = useCallback((jobId: string) => {
+    setSavedJobs(prev => {
+      const next = new Set(prev)
+      if (next.has(jobId)) next.delete(jobId)
+      else next.add(jobId)
+      localStorage.setItem('techscope-saved-jobs', JSON.stringify([...next]))
+      return next
+    })
+  }, [])
 
   const filtered = useMemo(() => {
     let list = [...jobs]
@@ -28,7 +53,8 @@ export function Jobs() {
       list = list.filter(j =>
         j.title.toLowerCase().includes(q) ||
         j.company.toLowerCase().includes(q) ||
-        j.skills.some(s => s.toLowerCase().includes(q))
+        j.skills.some(s => s.toLowerCase().includes(q)) ||
+        j.area.toLowerCase().includes(q)
       )
     }
     if (selectedArea !== 'Todas') list = list.filter(j => j.area === selectedArea)
@@ -48,11 +74,36 @@ export function Jobs() {
 
   const hasFilters = search || selectedArea !== 'Todas' || selectedSeniority !== 'Todas' || selectedModel !== 'Todos'
 
+  // Quick stats
+  const remoteCount = jobs.filter(j => j.workModel === 'Remoto').length
+  const avgSalary = Math.round(jobs.reduce((sum, j) => sum + (j.salaryMin + j.salaryMax) / 2, 0) / jobs.length)
+  const hotCount = jobs.filter(j => j.hot).length
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Vagas de Tecnologia</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">{filtered.length} vagas encontradas</p>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">{filtered.length} vagas encontradas · {savedJobs.size} salvas</p>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 bg-brand-50 dark:bg-brand-900/30 rounded-lg flex items-center justify-center"><Briefcase size={16} className="text-brand-500" /></div>
+          <div><p className="text-lg font-bold text-gray-900 dark:text-white">{jobs.length}</p><p className="text-xs text-gray-400">Total de vagas</p></div>
+        </div>
+        <div className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 bg-accent-50 dark:bg-accent-900/30 rounded-lg flex items-center justify-center"><Users size={16} className="text-accent-500" /></div>
+          <div><p className="text-lg font-bold text-gray-900 dark:text-white">{remoteCount}</p><p className="text-xs text-gray-400">Vagas remotas</p></div>
+        </div>
+        <div className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 bg-amber-50 dark:bg-amber-900/30 rounded-lg flex items-center justify-center"><TrendingUp size={16} className="text-amber-500" /></div>
+          <div><p className="text-lg font-bold text-gray-900 dark:text-white">R$ {(avgSalary/1000).toFixed(0)}k</p><p className="text-xs text-gray-400">Salário médio</p></div>
+        </div>
+        <div className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 bg-orange-50 dark:bg-orange-900/30 rounded-lg flex items-center justify-center"><Flame size={16} className="text-orange-500" /></div>
+          <div><p className="text-lg font-bold text-gray-900 dark:text-white">{hotCount}</p><p className="text-xs text-gray-400">Em destaque</p></div>
+        </div>
       </div>
 
       {/* Search & Filter Bar */}
@@ -61,7 +112,7 @@ export function Jobs() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Cargo, empresa ou skill..."
+            placeholder="Cargo, empresa, skill ou área..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
@@ -173,14 +224,18 @@ export function Jobs() {
           </div>
         ) : (
           filtered.map(job => (
-            <div key={job.id} className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-5 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-md group">
+            <div
+              key={job.id}
+              onClick={() => setSelectedJob(job)}
+              className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-5 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-md group cursor-pointer"
+            >
               <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                 <div className="w-12 h-12 bg-brand-50 dark:bg-brand-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Building2 size={20} className="text-brand-500" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-start gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">{job.title}</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{job.title}</h3>
                     {job.hot && (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange-500 bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded-full">
                         <Flame size={10} /> Hot
@@ -190,6 +245,7 @@ export function Jobs() {
                   <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
                     <span className="flex items-center gap-1"><Building2 size={13} /> {job.company}</span>
                     <span className="flex items-center gap-1"><MapPin size={13} /> {job.location}</span>
+                    <span className="flex items-center gap-1"><Clock size={13} /> {daysAgo(job.postedAt)}</span>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">{job.description}</p>
                   <div className="flex flex-wrap gap-1.5 mb-3">
@@ -214,16 +270,45 @@ export function Jobs() {
                     </p>
                     <p className="text-xs text-gray-400 mt-0.5">por mês</p>
                   </div>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold rounded-lg transition-colors">
-                    Candidatar <ExternalLink size={11} />
-                  </button>
-                  <p className="text-xs text-gray-400">{job.postedAt}</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={e => { e.stopPropagation(); toggleSave(job.id) }}
+                      className={clsx(
+                        'p-1.5 rounded-lg transition-colors',
+                        savedJobs.has(job.id)
+                          ? 'text-accent-500 bg-accent-50 dark:bg-accent-900/20'
+                          : 'text-gray-400 hover:text-brand-500 hover:bg-gray-100 dark:hover:bg-dark-600'
+                      )}
+                      title={savedJobs.has(job.id) ? 'Remover dos salvos' : 'Salvar vaga'}
+                    >
+                      {savedJobs.has(job.id) ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                    </button>
+                    <a
+                      href={job.applyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold rounded-lg transition-colors"
+                    >
+                      Candidatar <ExternalLink size={11} />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
           ))
         )}
       </div>
+
+      {/* Job Detail Modal */}
+      {selectedJob && (
+        <JobDetailModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+          isSaved={savedJobs.has(selectedJob.id)}
+          onToggleSave={() => toggleSave(selectedJob.id)}
+        />
+      )}
     </div>
   )
 }
