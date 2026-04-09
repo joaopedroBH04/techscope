@@ -30,6 +30,7 @@ export interface Job {
   description: string
   hot: boolean
   applyUrl: string
+  companyCareerUrl: string
   benefits: string[]
   requirements: string[]
 }

@@ -1,12 +1,20 @@
 import type { NewsItem } from '../types'
 
+/**
+ * Helper: gera link de busca no Google News sobre o tema.
+ * Garante que o link sempre funciona e leva o usuário a resultados reais.
+ */
+function googleNewsUrl(query: string): string {
+  return `https://news.google.com/search?q=${encodeURIComponent(query)}&hl=pt-BR&gl=BR`
+}
+
 export const news: NewsItem[] = [
   {
     id: '1',
     title: 'OpenAI lança GPT-5 com capacidades multimodais avançadas e raciocínio aprimorado',
     summary: 'A OpenAI apresentou o GPT-5, prometendo melhorias significativas em raciocínio lógico, codificação e interpretação de imagens e vídeos. O modelo supera benchmarks anteriores em matemática e ciência.',
     source: 'TechCrunch',
-    url: '#',
+    url: googleNewsUrl('OpenAI GPT-5 multimodal'),
     category: 'Inteligência Artificial',
     publishedAt: '2026-04-09',
     readTime: 4,
@@ -17,7 +25,7 @@ export const news: NewsItem[] = [
     title: 'Databricks anuncia nova versão do Delta Lake com suporte nativo a streaming em tempo real',
     summary: 'A atualização traz otimizações de performance de até 40% em workloads de streaming, além de integração melhorada com Apache Kafka e Flink.',
     source: 'InfoQ',
-    url: '#',
+    url: googleNewsUrl('Databricks Delta Lake streaming'),
     category: 'Engenharia de Dados',
     publishedAt: '2026-04-08',
     readTime: 3,
@@ -28,7 +36,7 @@ export const news: NewsItem[] = [
     title: 'Mercado de trabalho em dados cresce 35% no Brasil em 2025, aponta pesquisa',
     summary: 'Relatório da ABES revela que as vagas para profissionais de dados e IA cresceram 35% no último ano, com salários médios aumentando 20%. São Paulo concentra 60% das oportunidades.',
     source: 'ABES',
-    url: '#',
+    url: googleNewsUrl('mercado trabalho dados inteligência artificial Brasil 2025'),
     category: 'Mercado de Trabalho',
     publishedAt: '2026-04-07',
     readTime: 5,
@@ -39,7 +47,7 @@ export const news: NewsItem[] = [
     title: 'Google DeepMind apresenta Gemini 2.5 com performance superior em tarefas científicas',
     summary: 'O novo modelo da Google alcança resultados state-of-the-art em química, biologia e física, abrindo portas para descobertas científicas aceleradas por IA.',
     source: 'Nature',
-    url: '#',
+    url: googleNewsUrl('Google DeepMind Gemini 2.5'),
     category: 'Inteligência Artificial',
     publishedAt: '2026-04-07',
     readTime: 6,
@@ -50,7 +58,7 @@ export const news: NewsItem[] = [
     title: 'dbt Core 2.0 chega com suporte a Python e orquestração nativa de pipelines',
     summary: 'A nova versão major do dbt traz transformações em Python além de SQL, métricas centralizadas e um scheduler integrado, consolidando o dbt como ferramenta central em stacks modernas de dados.',
     source: 'dbt Blog',
-    url: '#',
+    url: googleNewsUrl('dbt Core 2.0 Python analytics engineering'),
     category: 'Engenharia de Dados',
     publishedAt: '2026-04-06',
     readTime: 4,
@@ -61,7 +69,7 @@ export const news: NewsItem[] = [
     title: 'Brasil forma 50 mil profissionais em IA em 2025, mas demanda ainda supera oferta',
     summary: 'Programas governamentais e privados de qualificação em inteligência artificial formaram 50 mil profissionais, mas especialistas apontam que ainda faltam 200 mil profissionais qualificados no país.',
     source: 'Folha de S.Paulo',
-    url: '#',
+    url: googleNewsUrl('Brasil formação profissionais inteligência artificial demanda'),
     category: 'Mercado de Trabalho',
     publishedAt: '2026-04-05',
     readTime: 5,
@@ -72,7 +80,7 @@ export const news: NewsItem[] = [
     title: 'Apache Spark 4.0 traz melhorias de 30% em performance com novo motor de execução',
     summary: 'A versão mais recente do Spark introduz o Velox como motor de execução nativo, resultando em ganhos expressivos de velocidade em workloads de dados massivos.',
     source: 'Apache Blog',
-    url: '#',
+    url: googleNewsUrl('Apache Spark 4.0 performance Velox'),
     category: 'Engenharia de Dados',
     publishedAt: '2026-04-04',
     readTime: 3,
@@ -83,7 +91,7 @@ export const news: NewsItem[] = [
     title: 'Rust ultrapassa Java como segunda linguagem mais usada em sistemas de alta performance',
     summary: 'Pesquisa da Stack Overflow mostra que Rust ganhou adoção massiva em infraestrutura, data pipelines e sistemas embarcados, tornando-se a segunda linguagem mais utilizada para sistemas críticos.',
     source: 'Stack Overflow',
-    url: '#',
+    url: googleNewsUrl('Rust programming language growth Stack Overflow survey'),
     category: 'Desenvolvimento',
     publishedAt: '2026-04-03',
     readTime: 4,
@@ -94,7 +102,7 @@ export const news: NewsItem[] = [
     title: 'AWS anuncia serviços de IA generativa integrados ao S3 e Redshift',
     summary: 'A Amazon Web Services expande sua suíte de IA com capacidades nativas de sumarização, geração de relatórios e análise semântica diretamente sobre dados armazenados na plataforma.',
     source: 'AWS Blog',
-    url: '#',
+    url: googleNewsUrl('AWS generative AI S3 Redshift'),
     category: 'Cloud & IA',
     publishedAt: '2026-04-02',
     readTime: 4,
@@ -105,7 +113,7 @@ export const news: NewsItem[] = [
     title: 'Estudo revela que 78% das empresas brasileiras estão aumentando investimentos em IA',
     summary: 'Pesquisa da McKinsey com 500 empresas do Brasil mostra aceleração na adoção de IA, especialmente em automação de processos, análise preditiva e atendimento ao cliente.',
     source: 'McKinsey',
-    url: '#',
+    url: googleNewsUrl('McKinsey empresas brasileiras investimento inteligência artificial'),
     category: 'Mercado',
     publishedAt: '2026-04-01',
     readTime: 6,

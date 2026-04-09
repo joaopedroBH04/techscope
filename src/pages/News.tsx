@@ -77,7 +77,12 @@ export function News() {
         <>
           {/* Featured Article */}
           {featured && (
-            <div className="bg-gradient-to-br from-brand-600 to-dark-900 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden">
+            <a
+              href={featured.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-gradient-to-br from-brand-600 to-dark-900 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden hover:shadow-2xl transition-shadow group"
+            >
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-1/2 translate-x-1/3" />
               </div>
@@ -86,34 +91,40 @@ export function News() {
                   <Badge variant="success">Destaque</Badge>
                   <span className="text-brand-200 text-sm">{featured.category}</span>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold leading-tight mb-3">{featured.title}</h2>
+                <h2 className="text-xl md:text-2xl font-bold leading-tight mb-3 group-hover:underline decoration-brand-300 underline-offset-4">{featured.title}</h2>
                 <p className="text-brand-200 text-sm md:text-base leading-relaxed mb-4">{featured.summary}</p>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-brand-300">
                   <span className="flex items-center gap-1.5"><Clock size={13} /> {featured.readTime} min</span>
                   <span>{featured.source}</span>
                   <span>{featured.publishedAt}</span>
                 </div>
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap items-center gap-2 mt-4">
                   {featured.tags.map(tag => (
                     <span key={tag} className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium">
                       #{tag}
                     </span>
                   ))}
+                  <span className="ml-auto flex items-center gap-1 text-sm font-medium text-brand-200 group-hover:text-white transition-colors">
+                    Ler mais <ExternalLink size={13} />
+                  </span>
                 </div>
               </div>
-            </div>
+            </a>
           )}
 
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {rest.map(item => (
-              <div
+              <a
                 key={item.id}
-                className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-5 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-md cursor-pointer group"
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-5 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-md group block"
               >
                 <div className="flex items-center justify-between mb-3">
                   <Badge variant={categoryColors[item.category] ?? 'default'}>{item.category}</Badge>
-                  <span className="text-xs text-gray-400">{item.readTime} min</span>
+                  <span className="text-xs text-gray-400 flex items-center gap-1"><Clock size={10} /> {item.readTime} min</span>
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight mb-2 line-clamp-3 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
                   {item.title}
@@ -133,11 +144,11 @@ export function News() {
                     <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{item.source}</p>
                     <p className="text-xs text-gray-400">{item.publishedAt}</p>
                   </div>
-                  <button className="flex items-center gap-1 text-xs text-brand-500 font-medium hover:text-brand-600">
+                  <span className="flex items-center gap-1 text-xs text-brand-500 font-medium group-hover:text-brand-600 transition-colors">
                     Ler <ExternalLink size={11} />
-                  </button>
+                  </span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </>

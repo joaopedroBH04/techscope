@@ -1,4 +1,4 @@
-import { X, ExternalLink, MapPin, Building2, Calendar, Bookmark, BookmarkCheck, DollarSign, CheckCircle2, Gift, Clock } from 'lucide-react'
+import { X, ExternalLink, MapPin, Building2, Calendar, Bookmark, BookmarkCheck, DollarSign, CheckCircle2, Gift, Clock, Globe, Search } from 'lucide-react'
 import { Badge } from '../ui/Badge'
 import type { Job } from '../../types'
 
@@ -139,27 +139,37 @@ export function JobDetailModal({ job, onClose, isSaved, onToggleSave }: JobDetai
             <span className="flex items-center gap-1">{job.area}</span>
           </div>
 
-          {/* CTA */}
-          <div className="flex gap-3 pt-2">
+          {/* CTAs — LinkedIn + Portal da empresa + Salvar */}
+          <div className="space-y-3 pt-2">
+            <div className="flex gap-3">
+              <a
+                href={job.applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 bg-[#0a66c2] hover:bg-[#004182] text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm shadow-lg shadow-blue-500/20"
+              >
+                <Search size={16} /> Buscar no LinkedIn
+              </a>
+              <button
+                onClick={onToggleSave}
+                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
+                  isSaved
+                    ? 'bg-accent-50 dark:bg-accent-900/20 border-accent-200 dark:border-accent-800 text-accent-600 dark:text-accent-400'
+                    : 'bg-white dark:bg-dark-700 border-gray-200 dark:border-dark-600 text-gray-600 dark:text-gray-300 hover:border-brand-400'
+                }`}
+              >
+                {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                {isSaved ? 'Salvo' : 'Salvar'}
+              </button>
+            </div>
             <a
-              href={job.applyUrl}
+              href={job.companyCareerUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm shadow-lg shadow-brand-500/20"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl border border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-700 dark:text-gray-300 hover:border-brand-400 dark:hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 transition-all text-sm font-medium"
             >
-              Candidatar-se <ExternalLink size={14} />
+              <Globe size={14} /> Portal de carreiras da {job.company} <ExternalLink size={12} />
             </a>
-            <button
-              onClick={onToggleSave}
-              className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
-                isSaved
-                  ? 'bg-accent-50 dark:bg-accent-900/20 border-accent-200 dark:border-accent-800 text-accent-600 dark:text-accent-400'
-                  : 'bg-white dark:bg-dark-700 border-gray-200 dark:border-dark-600 text-gray-600 dark:text-gray-300 hover:border-brand-400'
-              }`}
-            >
-              {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-              {isSaved ? 'Salvo' : 'Salvar'}
-            </button>
           </div>
         </div>
       </div>
