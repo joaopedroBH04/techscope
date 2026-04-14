@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TrendingUp, Search, Zap, Star } from 'lucide-react'
+import { TrendingUp, Search, Zap, Star, BarChart3 } from 'lucide-react'
 import { tools, techStackByRole } from '../data/tools'
 import { Badge } from '../components/ui/Badge'
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
@@ -112,6 +112,60 @@ export function Tools() {
               </span>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Skills Demand Comparison */}
+      <div className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-6">
+        <h2 className="font-semibold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+          <BarChart3 size={16} className="text-brand-500" /> Demanda vs Crescimento por Skill
+        </h2>
+        <p className="text-xs text-gray-400 mb-4">Comparando número de vagas e velocidade de adoção das top ferramentas</p>
+        <div className="space-y-3">
+          {tools
+            .sort((a, b) => b.demandJobs - a.demandJobs)
+            .slice(0, 10)
+            .map(tool => {
+              const maxDemand = tools.reduce((max, t) => Math.max(max, t.demandJobs), 0)
+              const maxGrowth = tools.reduce((max, t) => Math.max(max, t.usageGrowth), 0)
+              return (
+                <div key={tool.id} className="flex items-center gap-3">
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                    style={{ backgroundColor: tool.logoColor }}
+                  >
+                    {tool.name.slice(0, 2)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{tool.name}</span>
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="text-brand-500 font-semibold">{tool.demandJobs.toLocaleString('pt-BR')} vagas</span>
+                        <span className="text-accent-500 font-semibold">+{tool.usageGrowth}%</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 h-2">
+                      <div className="flex-1 bg-gray-100 dark:bg-dark-600 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-brand-500 rounded-full transition-all"
+                          style={{ width: `${(tool.demandJobs / maxDemand) * 100}%` }}
+                        />
+                      </div>
+                      <div className="flex-1 bg-gray-100 dark:bg-dark-600 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-accent-500 rounded-full transition-all"
+                          style={{ width: `${(tool.usageGrowth / maxGrowth) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+        </div>
+        <div className="flex items-center gap-6 mt-4 text-xs text-gray-400">
+          <span className="flex items-center gap-1.5"><span className="w-3 h-1.5 bg-brand-500 rounded-full" /> Demanda (vagas)</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-1.5 bg-accent-500 rounded-full" /> Crescimento (%)</span>
         </div>
       </div>
 

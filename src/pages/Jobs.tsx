@@ -28,6 +28,7 @@ export function Jobs() {
   const [selectedModel, setSelectedModel] = useState<WorkModel | 'Todos'>('Todos')
   const [showFilters, setShowFilters] = useState(false)
   const [sortBy, setSortBy] = useState<'recente' | 'salario'>('recente')
+  const [showSavedOnly, setShowSavedOnly] = useState(false)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
   const [savedJobs, setSavedJobs] = useState<Set<string>>(() => {
     try {
@@ -48,6 +49,7 @@ export function Jobs() {
 
   const filtered = useMemo(() => {
     let list = [...jobs]
+    if (showSavedOnly) list = list.filter(j => savedJobs.has(j.id))
     if (search) {
       const q = search.toLowerCase()
       list = list.filter(j =>
@@ -63,16 +65,17 @@ export function Jobs() {
     if (sortBy === 'salario') list.sort((a, b) => b.salaryMax - a.salaryMax)
     else list.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime())
     return list
-  }, [search, selectedArea, selectedSeniority, selectedModel, sortBy])
+  }, [search, selectedArea, selectedSeniority, selectedModel, sortBy, showSavedOnly, savedJobs])
 
   const clearFilters = () => {
     setSearch('')
     setSelectedArea('Todas')
     setSelectedSeniority('Todas')
     setSelectedModel('Todos')
+    setShowSavedOnly(false)
   }
 
-  const hasFilters = search || selectedArea !== 'Todas' || selectedSeniority !== 'Todas' || selectedModel !== 'Todos'
+  const hasFilters = search || selectedArea !== 'Todas' || selectedSeniority !== 'Todas' || selectedModel !== 'Todos' || showSavedOnly
 
   // Quick stats
   const remoteCount = jobs.filter(j => j.workModel === 'Remoto').length
@@ -119,6 +122,17 @@ export function Jobs() {
           />
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={() => setShowSavedOnly(!showSavedOnly)}
+            className={clsx(
+              'flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors',
+              showSavedOnly
+                ? 'bg-accent-500 border-accent-500 text-white'
+                : 'border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-700 dark:text-gray-200 hover:border-accent-400'
+            )}
+          >
+            <BookmarkCheck size={15} /> Salvas{savedJobs.size > 0 && ` (${savedJobs.size})`}
+          </button>
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as 'recente' | 'salario')}

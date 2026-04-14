@@ -1,4 +1,5 @@
-import { Brain, Database, Cpu, TrendingUp, Zap, BookOpen, ArrowRight, Star } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Brain, Database, Cpu, TrendingUp, Zap, BookOpen, ArrowRight, Star, ExternalLink } from 'lucide-react'
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { Badge } from '../components/ui/Badge'
 import { StatCard } from '../components/ui/StatCard'
@@ -194,23 +195,34 @@ export function AIData() {
           <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Database size={16} className="text-brand-500" /> Vagas em Dados & IA
           </h2>
-          <a href="/vagas" className="flex items-center gap-1 text-brand-500 hover:text-brand-600 text-sm font-medium">
+          <Link to="/vagas" className="flex items-center gap-1 text-brand-500 hover:text-brand-600 text-sm font-medium">
             Ver todas <ArrowRight size={14} />
-          </a>
+          </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {aiJobs.slice(0, 6).map(job => (
-            <div key={job.id} className="p-4 bg-gray-50 dark:bg-dark-800 rounded-xl border border-gray-100 dark:border-dark-700 hover:border-brand-400 dark:hover:border-brand-600 transition-all">
-              <p className="font-medium text-gray-900 dark:text-white text-sm">{job.title}</p>
+            <a
+              key={job.id}
+              href={job.applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-gray-50 dark:bg-dark-800 rounded-xl border border-gray-100 dark:border-dark-700 hover:border-brand-400 dark:hover:border-brand-600 transition-all hover:shadow-md group block"
+            >
+              <p className="font-medium text-gray-900 dark:text-white text-sm group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{job.title}</p>
               <p className="text-xs text-gray-400 mt-0.5">{job.company}</p>
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant={job.workModel === 'Remoto' ? 'success' : 'warning'}>{job.workModel}</Badge>
                 <Badge variant="purple">{job.seniority}</Badge>
               </div>
-              <p className="text-brand-600 dark:text-brand-400 font-bold text-sm mt-2">
-                R$ {(job.salaryMin/1000).toFixed(0)}k – {(job.salaryMax/1000).toFixed(0)}k
-              </p>
-            </div>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-brand-600 dark:text-brand-400 font-bold text-sm">
+                  R$ {(job.salaryMin/1000).toFixed(0)}k – {(job.salaryMax/1000).toFixed(0)}k
+                </p>
+                <span className="flex items-center gap-1 text-xs text-brand-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  Ver vaga <ExternalLink size={10} />
+                </span>
+              </div>
+            </a>
           ))}
         </div>
       </div>
@@ -222,21 +234,28 @@ export function AIData() {
         </h2>
         <div className="space-y-3">
           {aiNews.map(item => (
-            <div key={item.id} className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-4 flex gap-4 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-sm cursor-pointer">
+            <a
+              key={item.id}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-4 flex gap-4 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-sm group block"
+            >
               <div className="w-1 self-stretch rounded-full bg-brand-400 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-semibold text-brand-500">{item.category}</span>
                   <span className="text-xs text-gray-400">{item.source}</span>
                 </div>
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight">{item.title}</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{item.title}</p>
                 <p className="text-xs text-gray-400 mt-1 line-clamp-2">{item.summary}</p>
               </div>
               <div className="text-xs text-gray-400 flex-shrink-0 text-right">
                 <p>{item.readTime} min</p>
                 <p className="mt-1">{item.publishedAt}</p>
+                <ExternalLink size={12} className="text-gray-300 dark:text-gray-600 group-hover:text-brand-400 transition-colors mt-2 ml-auto" />
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

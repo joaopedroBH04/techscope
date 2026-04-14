@@ -6,7 +6,7 @@ import {
 } from 'recharts'
 import {
   Briefcase, DollarSign, TrendingUp, Zap, Brain,
-  ArrowRight, Flame, Star, BookOpen,
+  ArrowRight, Flame, Star, BookOpen, ExternalLink,
 } from 'lucide-react'
 import { StatCard } from '../components/ui/StatCard'
 import { Badge } from '../components/ui/Badge'
@@ -32,7 +32,6 @@ const radarData = demandByArea.slice(0, 7).map(d => ({
 export function Dashboard() {
   const hotJobs = jobs.filter(j => j.hot).slice(0, 4)
   const topNews = news.slice(0, 3)
-  
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -142,7 +141,13 @@ export function Dashboard() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {hotJobs.map(job => (
-            <div key={job.id} className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-4 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-md cursor-pointer">
+            <a
+              key={job.id}
+              href={job.applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-4 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-md group block"
+            >
               <div className="flex items-start justify-between mb-2">
                 <div className="w-9 h-9 bg-brand-50 dark:bg-brand-900/30 rounded-lg flex items-center justify-center">
                   <Brain size={16} className="text-brand-500" />
@@ -151,7 +156,7 @@ export function Dashboard() {
                   {job.workModel}
                 </Badge>
               </div>
-              <h3 className="font-medium text-gray-900 dark:text-white text-sm mt-2 leading-tight">{job.title}</h3>
+              <h3 className="font-medium text-gray-900 dark:text-white text-sm mt-2 leading-tight group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{job.title}</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{job.company}</p>
               <div className="flex items-center justify-between mt-3">
                 <span className="text-brand-600 dark:text-brand-400 font-semibold text-sm">
@@ -159,7 +164,10 @@ export function Dashboard() {
                 </span>
                 <Badge variant="purple">{job.seniority}</Badge>
               </div>
-            </div>
+              <span className="flex items-center gap-1 mt-2 text-xs text-brand-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                Ver no LinkedIn <ExternalLink size={10} />
+              </span>
+            </a>
           ))}
         </div>
       </div>
@@ -178,14 +186,21 @@ export function Dashboard() {
           </div>
           <div className="space-y-4">
             {topNews.map(item => (
-              <div key={item.id} className="flex gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors cursor-pointer">
+              <a
+                key={item.id}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-600 transition-colors group block"
+              >
                 <div className="w-1 self-stretch rounded-full bg-brand-400 flex-shrink-0" />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <span className="text-xs text-brand-500 font-medium">{item.category}</span>
-                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight mt-0.5 line-clamp-2">{item.title}</p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight mt-0.5 line-clamp-2 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{item.title}</p>
                   <p className="text-xs text-gray-400 mt-1">{item.source} · {item.readTime} min leitura</p>
                 </div>
-              </div>
+                <ExternalLink size={12} className="text-gray-300 dark:text-gray-600 group-hover:text-brand-400 transition-colors flex-shrink-0 mt-1" />
+              </a>
             ))}
           </div>
         </div>

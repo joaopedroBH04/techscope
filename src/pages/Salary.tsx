@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend,
 } from 'recharts'
-import { DollarSign, TrendingUp, Info } from 'lucide-react'
+import { DollarSign, TrendingUp, Info, Calculator } from 'lucide-react'
 import { salaryData, salaryByArea, salaryTrend, seniorityColors } from '../data/salaries'
 import clsx from 'clsx'
 
@@ -12,6 +12,109 @@ const seniorityDisplay = { junior: 'Júnior', pleno: 'Pleno', senior: 'Sênior',
 
 function fmtR(n: unknown) {
   return `R$ ${(n as number).toLocaleString('pt-BR')}`
+}
+
+function calcINSS(bruto: number) {
+  if (bruto <= 1412) return bruto * 0.075
+  if (bruto <= 2666.68) return 1412 * 0.075 + (bruto - 1412) * 0.09
+  if (bruto <= 4000.03) return 1412 * 0.075 + (2666.68 - 1412) * 0.09 + (bruto - 2666.68) * 0.12
+  if (bruto <= 7786.02) return 1412 * 0.075 + (2666.68 - 1412) * 0.09 + (4000.03 - 2666.68) * 0.12 + (bruto - 4000.03) * 0.14
+  return 1412 * 0.075 + (2666.68 - 1412) * 0.09 + (4000.03 - 2666.68) * 0.12 + (7786.02 - 4000.03) * 0.14
+}
+
+function calcIRRF(baseIR: number) {
+  if (baseIR <= 2259.20) return 0
+  if (baseIR <= 2826.65) return baseIR * 0.075 - 169.44
+  if (baseIR <= 3751.05) return baseIR * 0.15 - 381.44
+  if (baseIR <= 4664.68) return baseIR * 0.225 - 662.77
+  return baseIR * 0.275 - 896.00
+}
+
+function SalaryCalculator() {
+  const [calcRole, setCalcRole] = useState(salaryData[0].role)
+  const [calcLevel, setCalcLevel] = useState<typeof seniorityLabels[number]>('pleno')
+  const [dependents, setDependents] = useState(0)
+
+  const roleInfo = salaryData.find(s => s.role === calcRole) ?? salaryData[0]
+  const bruto = roleInfo[calcLevel]
+  const inss = calcINSS(bruto)
+  const baseIR = bruto - inss - (dependents * 189.59)
+  const irrf = calcIRRF(baseIR)
+  const liquido = bruto - inss - irrf
+  const anual = liquido * 13
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div>
+          <label className="text-xs font-medium text-gray-400 mb-1.5 block">Cargo</label>
+          <select
+            value={calcRole}
+            onChange={e => setCalcRole(e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          >
+            {salaryData.map(s => <option key={s.role} value={s.role}>{s.role}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-400 mb-1.5 block">Senioridade</label>
+          <div className="flex gap-2 flex-wrap">
+            {seniorityLabels.map(level => (
+              <button
+                key={level}
+                onClick={() => setCalcLevel(level)}
+                className={clsx(
+                  'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
+                  calcLevel === level ? 'text-white shadow' : 'bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-gray-300'
+                )}
+                style={calcLevel === level ? { backgroundColor: seniorityColors[level] } : {}}
+              >
+                {seniorityDisplay[level]}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-400 mb-1.5 block">Dependentes</label>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setDependents(Math.max(0, dependents - 1))} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-gray-300 font-bold text-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-dark-500 transition-colors">−</button>
+            <span className="text-lg font-bold text-gray-900 dark:text-white w-6 text-center">{dependents}</span>
+            <button onClick={() => setDependents(Math.min(10, dependents + 1))} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-gray-300 font-bold text-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-dark-500 transition-colors">+</button>
+          </div>
+        </div>
+      </div>
+      <div className="bg-gray-50 dark:bg-dark-800 rounded-xl p-5 border border-gray-100 dark:border-dark-600">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Salário Bruto</span>
+            <span className="font-bold text-gray-900 dark:text-white">{fmtR(bruto)}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-500 dark:text-gray-400">INSS</span>
+            <span className="font-semibold text-red-500">− {fmtR(Math.round(inss))}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-500 dark:text-gray-400">IRRF</span>
+            <span className="font-semibold text-red-500">− {fmtR(Math.round(irrf))}</span>
+          </div>
+          <div className="border-t border-gray-200 dark:border-dark-600 pt-3 flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">Salário Líquido</span>
+            <span className="text-xl font-bold text-accent-600 dark:text-accent-400">{fmtR(Math.round(liquido))}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Estimativa Anual (13º)</span>
+            <span className="font-semibold text-brand-600 dark:text-brand-400">{fmtR(Math.round(anual))}</span>
+          </div>
+        </div>
+        <div className="mt-4 p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+          <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start gap-1.5">
+            <Info size={11} className="flex-shrink-0 mt-0.5" />
+            Valores estimados com base nas faixas INSS/IRRF 2024. Não inclui benefícios, bônus ou PLR.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export function Salary() {
@@ -155,6 +258,15 @@ export function Salary() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Salary Calculator */}
+      <div className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-6">
+        <h2 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <Calculator size={16} className="text-accent-500" /> Calculadora Salarial
+        </h2>
+        <p className="text-xs text-gray-400 mb-5">Simule seu salário líquido com base no cargo e senioridade</p>
+        <SalaryCalculator />
       </div>
 
       {/* Salary Trend */}
