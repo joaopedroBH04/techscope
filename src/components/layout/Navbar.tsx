@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Briefcase, DollarSign, Newspaper,
@@ -17,7 +17,7 @@ const navItems = [
   { path: '/ia-dados', label: 'IA & Dados', icon: Brain },
 ]
 
-export function Navbar() {
+export const Navbar = memo(function Navbar() {
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -99,4 +99,4 @@ export function Navbar() {
       )}
     </nav>
   )
-}
+})

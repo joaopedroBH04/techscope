@@ -1,6 +1,6 @@
+import { memo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { TrendingUp, Code2, Briefcase, Mail, Send } from 'lucide-react'
-import { useState } from 'react'
 
 const navLinks = [
   { path: '/vagas', label: 'Vagas' },
@@ -18,7 +18,7 @@ const resources = [
   { href: 'https://survey.stackoverflow.co/', label: 'Stack Overflow Survey' },
 ]
 
-export function Footer() {
+export const Footer = memo(function Footer() {
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
 
@@ -124,4 +124,4 @@ export function Footer() {
       </div>
     </footer>
   )
-}
+})

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 type Theme = 'light' | 'dark'
 
@@ -19,7 +19,9 @@ export function useTheme() {
     localStorage.setItem('techscope-theme', theme)
   }, [theme])
 
-  const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
+  }, [])
 
   return { theme, toggleTheme }
 }
