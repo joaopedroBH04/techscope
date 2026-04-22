@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ErrorBoundary } from './components/ui/ErrorBoundary'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
 import { ScrollToTop } from './components/layout/ScrollToTop'
@@ -40,9 +41,11 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white transition-colors duration-300 flex flex-col">
-        <AppContent />
-      </div>
+      <ErrorBoundary>
+        <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white transition-colors duration-300 flex flex-col">
+          <AppContent />
+        </div>
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }
