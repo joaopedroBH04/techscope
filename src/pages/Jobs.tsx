@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { Search, MapPin, Building2, Briefcase, Filter, X, Flame, ExternalLink, Bookmark, BookmarkCheck, Clock, Users, TrendingUp } from 'lucide-react'
-import { Badge } from '../components/ui/Badge'
+import { Search, Briefcase, Filter, X, Flame, BookmarkCheck, Users, TrendingUp } from 'lucide-react'
 import { JobDetailModal } from '../components/jobs/JobDetailModal'
 import { VirtualizedJobList } from '../components/jobs/VirtualizedJobList'
 import { jobs } from '../data/jobs'
@@ -10,17 +9,6 @@ import clsx from 'clsx'
 const areas: TechArea[] = ['Dados & BI', 'Inteligência Artificial', 'Machine Learning', 'DevOps & Cloud', 'Backend', 'Frontend', 'Segurança', 'Engenharia de Software']
 const seniorities: Seniority[] = ['Estágio', 'Júnior', 'Pleno', 'Sênior', 'Especialista', 'Gerência']
 const workModels: WorkModel[] = ['Remoto', 'Híbrido', 'Presencial']
-
-function fmtSalary(n: number) {
-  return `R$ ${(n / 1000).toFixed(0)}k`
-}
-
-function daysAgo(date: string) {
-  const diff = Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24))
-  if (diff === 0) return 'Hoje'
-  if (diff === 1) return 'Ontem'
-  return `${diff}d atrás`
-}
 
 export function Jobs() {
   const [search, setSearch] = useState('')

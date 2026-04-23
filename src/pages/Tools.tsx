@@ -26,12 +26,17 @@ export function Tools() {
       return b.usageGrowth - a.usageGrowth
     })
 
-  const roleStack = techStackByRole[selectedRole] ?? []
-  const radarData = roleStack.slice(0, 6).map(skill => ({
-    subject: skill.split(' ')[0],
-    value: Math.floor(Math.random() * 30 + 70),
-    fullMark: 100,
-  }))
+  const roleStack = useMemo(() => techStackByRole[selectedRole] ?? [], [selectedRole])
+  
+  // Use useMemo to avoid calling Math.random during render
+  const radarData = useMemo(() => {
+    return roleStack.slice(0, 6).map((skill, index) => ({
+      subject: skill.split(' ')[0],
+      // Use deterministic values based on index for purity
+      value: 70 + ((index * 7) % 30),
+      fullMark: 100,
+    }))
+  }, [roleStack])
 
   const growthChartData = tools
     .sort((a, b) => b.usageGrowth - a.usageGrowth)
