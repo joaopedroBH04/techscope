@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Search, MapPin, Building2, Briefcase, Filter, X, Flame, ExternalLink, Bookmark, BookmarkCheck, Clock, Users, TrendingUp } from 'lucide-react'
 import { Badge } from '../components/ui/Badge'
 import { JobDetailModal } from '../components/jobs/JobDetailModal'
+import { VirtualizedJobList } from '../components/jobs/VirtualizedJobList'
 import { jobs } from '../data/jobs'
 import type { Job, TechArea, Seniority, WorkModel } from '../types'
 import clsx from 'clsx'
@@ -228,91 +229,13 @@ export function Jobs() {
         </div>
       )}
 
-      {/* Job Cards */}
-      <div className="grid grid-cols-1 gap-4">
-        {filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            <Briefcase size={40} className="mx-auto mb-3 opacity-30" />
-            <p className="font-medium">Nenhuma vaga encontrada</p>
-            <p className="text-sm mt-1">Tente ajustar os filtros</p>
-          </div>
-        ) : (
-          filtered.map(job => (
-            <div
-              key={job.id}
-              onClick={() => setSelectedJob(job)}
-              className="bg-white dark:bg-dark-700 rounded-xl border border-gray-100 dark:border-dark-600 p-5 hover:border-brand-400 dark:hover:border-brand-500 transition-all hover:shadow-md group cursor-pointer"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                <div className="w-12 h-12 bg-brand-50 dark:bg-brand-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Building2 size={20} className="text-brand-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-start gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{job.title}</h3>
-                    {job.hot && (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange-500 bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded-full">
-                        <Flame size={10} /> Hot
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    <span className="flex items-center gap-1"><Building2 size={13} /> {job.company}</span>
-                    <span className="flex items-center gap-1"><MapPin size={13} /> {job.location}</span>
-                    <span className="flex items-center gap-1"><Clock size={13} /> {daysAgo(job.postedAt)}</span>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">{job.description}</p>
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {job.skills.map(skill => (
-                      <span key={skill} className="px-2 py-0.5 bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-gray-300 text-xs rounded-md">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Badge variant={job.workModel === 'Remoto' ? 'success' : job.workModel === 'Híbrido' ? 'warning' : 'default'}>
-                      {job.workModel}
-                    </Badge>
-                    <Badge variant="purple">{job.seniority}</Badge>
-                    <Badge variant="info">{job.area}</Badge>
-                  </div>
-                </div>
-                <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-2 flex-shrink-0">
-                  <div className="text-right">
-                    <p className="font-bold text-brand-600 dark:text-brand-400">
-                      {fmtSalary(job.salaryMin)} – {fmtSalary(job.salaryMax)}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-0.5">por mês</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={e => { e.stopPropagation(); toggleSave(job.id) }}
-                      className={clsx(
-                        'p-1.5 rounded-lg transition-colors',
-                        savedJobs.has(job.id)
-                          ? 'text-accent-500 bg-accent-50 dark:bg-accent-900/20'
-                          : 'text-gray-400 hover:text-brand-500 hover:bg-gray-100 dark:hover:bg-dark-600'
-                      )}
-                      title={savedJobs.has(job.id) ? 'Remover dos salvos' : 'Salvar vaga'}
-                    >
-                      {savedJobs.has(job.id) ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-                    </button>
-                    <a
-                      href={job.applyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold rounded-lg transition-colors"
-                    >
-                      Candidatar <ExternalLink size={11} />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+      {/* Job Cards - Virtualized for Performance */}
+      <VirtualizedJobList
+        jobs={filtered}
+        savedJobs={savedJobs}
+        onToggleSave={toggleSave}
+        onSelectJob={setSelectedJob}
+      />
 
       {/* Job Detail Modal */}
       {selectedJob && (
