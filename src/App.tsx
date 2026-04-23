@@ -5,14 +5,35 @@ import { Footer } from './components/layout/Footer'
 import { ScrollToTop } from './components/layout/ScrollToTop'
 import { BackToTop } from './components/layout/BackToTop'
 import { usePageTitle } from './hooks/usePageTitle'
-import { Dashboard } from './pages/Dashboard'
-import { Jobs } from './pages/Jobs'
-import { Salary } from './pages/Salary'
-import { News } from './pages/News'
-import { Tools } from './pages/Tools'
-import { CareerPaths } from './pages/CareerPaths'
-import { AIData } from './pages/AIData'
-import { NotFound } from './pages/NotFound'
+import { lazy, Suspense, type ReactNode } from 'react'
+
+// Lazy loaded pages for performance optimization
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Jobs = lazy(() => import('./pages/Jobs'))
+const Salary = lazy(() => import('./pages/Salary'))
+const News = lazy(() => import('./pages/News'))
+const Tools = lazy(() => import('./pages/Tools'))
+const CareerPaths = lazy(() => import('./pages/CareerPaths'))
+const AIData = lazy(() => import('./pages/AIData'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+
+// Loading fallback component
+function PageLoadingFallback() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
+    </div>
+  )
+}
+
+// Wrapper component for lazy routes with consistent loading state
+function LazyRoute({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={<PageLoadingFallback />}>
+      {children}
+    </Suspense>
+  )
+}
 
 function AppContent() {
   usePageTitle()
@@ -22,14 +43,14 @@ function AppContent() {
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/vagas" element={<Jobs />} />
-          <Route path="/salarios" element={<Salary />} />
-          <Route path="/noticias" element={<News />} />
-          <Route path="/ferramentas" element={<Tools />} />
-          <Route path="/trilhas" element={<CareerPaths />} />
-          <Route path="/ia-dados" element={<AIData />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<LazyRoute><Dashboard /></LazyRoute>} />
+          <Route path="/vagas" element={<LazyRoute><Jobs /></LazyRoute>} />
+          <Route path="/salarios" element={<LazyRoute><Salary /></LazyRoute>} />
+          <Route path="/noticias" element={<LazyRoute><News /></LazyRoute>} />
+          <Route path="/ferramentas" element={<LazyRoute><Tools /></LazyRoute>} />
+          <Route path="/trilhas" element={<LazyRoute><CareerPaths /></LazyRoute>} />
+          <Route path="/ia-dados" element={<LazyRoute><AIData /></LazyRoute>} />
+          <Route path="*" element={<LazyRoute><NotFound /></LazyRoute>} />
         </Routes>
       </main>
       <Footer />
