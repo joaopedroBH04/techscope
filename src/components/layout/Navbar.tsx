@@ -2,7 +2,7 @@ import { memo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Briefcase, DollarSign, Newspaper,
-  Wrench, GitBranch, Brain, Menu, X, Moon, Sun, TrendingUp, Search,
+  Wrench, GitBranch, Brain, Menu, X, Moon, Sun, TrendingUp, Search, Zap,
 } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
 import { useScrollProgress } from '../../hooks/useScrollProgress'
@@ -16,6 +16,10 @@ const navItems = [
   { path: '/ferramentas', label: 'Ferramentas', icon: Wrench },
   { path: '/trilhas', label: 'Trilhas', icon: GitBranch },
   { path: '/ia-dados', label: 'IA & Dados', icon: Brain },
+]
+
+const devItems = [
+  { path: '/performance', label: 'Performance', icon: Zap },
 ]
 
 export const Navbar = memo(function Navbar() {
@@ -61,6 +65,25 @@ export const Navbar = memo(function Navbar() {
                 {label}
               </Link>
             ))}
+            {/* Dev tools - apenas em desenvolvimento */}
+            {import.meta.env.DEV && (
+              <>
+                <div className="w-px h-6 bg-gray-200 dark:bg-dark-600 mx-1" />
+                {devItems.map(({ path, label, icon: Icon }) => (
+                  <Link
+                    key={path}
+                    to={path}
+                    className={clsx(
+                      'flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30',
+                      location.pathname === path && 'bg-purple-100 dark:bg-purple-900/50'
+                    )}
+                  >
+                    <Icon size={15} />
+                    {label}
+                  </Link>
+                ))}
+              </>
+            )}
           </div>
 
           {/* Right controls */}
@@ -123,6 +146,28 @@ export const Navbar = memo(function Navbar() {
                 {label}
               </Link>
             ))}
+            {/* Dev tools - apenas em desenvolvimento */}
+            {import.meta.env.DEV && (
+              <>
+                <div className="py-2">
+                  <div className="h-px bg-gray-200 dark:bg-dark-600" />
+                </div>
+                {devItems.map(({ path, label, icon: Icon }) => (
+                  <Link
+                    key={path}
+                    to={path}
+                    onClick={() => setMobileOpen(false)}
+                    className={clsx(
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30',
+                      location.pathname === path && 'bg-purple-100 dark:bg-purple-900/50'
+                    )}
+                  >
+                    <Icon size={18} />
+                    {label}
+                  </Link>
+                ))}
+              </>
+            )}
           </div>
         </div>
       )}

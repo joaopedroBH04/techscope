@@ -13,6 +13,7 @@ import { Tools } from './pages/Tools'
 import { CareerPaths } from './pages/CareerPaths'
 import { AIData } from './pages/AIData'
 import { NotFound } from './pages/NotFound'
+import { WebVitalsDashboard } from './components/WebVitalsDashboard'
 
 function AppContent() {
   usePageTitle()
@@ -29,6 +30,7 @@ function AppContent() {
           <Route path="/ferramentas" element={<Tools />} />
           <Route path="/trilhas" element={<CareerPaths />} />
           <Route path="/ia-dados" element={<AIData />} />
+          <Route path="/performance" element={<WebVitalsDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
