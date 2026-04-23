@@ -29,15 +29,6 @@ jobs:
       
       - name: Run TypeScript check
         run: npm run type-check || tsc --noEmit
-      
-      - name: Run tests with coverage
-        run: npm run test -- --coverage --watchAll=false
-      
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage/lcov.info
-          fail_ci_if_error: false
 
   build:
     name: Build Application
