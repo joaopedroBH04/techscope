@@ -1,17 +1,11 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 
-interface AppContextType {
-  // Add global state here as needed
-  // Example: theme: 'light' | 'dark'
-  // Example: setTheme: (theme: 'light' | 'dark') => void
-}
+type AppContextType = Record<string, never>
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [state] = useState<AppContextType>({
-    // Initialize state here
-  })
+  const [state] = useState<AppContextType>({})
 
   return (
     <AppContext.Provider value={state}>
