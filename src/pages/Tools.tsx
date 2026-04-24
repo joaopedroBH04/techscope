@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { TrendingUp, Search, Zap, Star, BarChart3 } from 'lucide-react'
 import { tools, techStackByRole } from '../data/tools'
 import { Badge } from '../components/ui/Badge'
@@ -267,3 +267,4 @@ export function Tools() {
     </div>
   )
 }
+export default Tools;
