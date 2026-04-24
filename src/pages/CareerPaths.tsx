@@ -173,3 +173,4 @@ export function CareerPaths() {
     </div>
   )
 }
+export default CareerPaths;

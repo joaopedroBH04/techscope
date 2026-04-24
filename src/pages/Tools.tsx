@@ -267,3 +267,4 @@ export function Tools() {
     </div>
   )
 }
+export default Tools;

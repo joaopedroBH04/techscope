@@ -262,3 +262,4 @@ export function AIData() {
     </div>
   )
 }
+export default AIData;

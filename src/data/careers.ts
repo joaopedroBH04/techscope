@@ -177,3 +177,6 @@ export const demandByArea = [
   { area: 'Backend', demand: 78, growth: 20 },
   { area: 'Segurança', demand: 72, growth: 25 },
 ]
+
+// Alias for useApi compatibility
+export const careers = careerPaths;

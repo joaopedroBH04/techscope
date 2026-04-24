@@ -125,3 +125,6 @@ export const salaryTrend = [
   { year: '2025', dados: 22000, ia: 30000, devops: 22000, dev: 17000 },
   { year: '2026', dados: 25000, ia: 35000, devops: 24000, dev: 19000 },
 ]
+
+// Alias for useApi compatibility
+export const salaries = salaryData
