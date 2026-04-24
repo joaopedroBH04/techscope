@@ -4,7 +4,6 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -19,16 +18,8 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
-          {
-            src: '/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: '/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
+          { src: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icon-512x512.png', sizes: '512x512', type: 'image/png' }
         ]
       },
       workbox: {
@@ -39,13 +30,8 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 // 24 hours
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
+              expiration: { maxEntries: 100, maxAgeSeconds: 86400 },
+              cacheableResponse: { statuses: [0, 200] }
             }
           },
           {
@@ -53,10 +39,7 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'images-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              }
+              expiration: { maxEntries: 50, maxAgeSeconds: 2592000 }
             }
           },
           {
@@ -64,24 +47,17 @@ export default defineConfig({
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'static-resources',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
-              }
+              expiration: { maxEntries: 100, maxAgeSeconds: 604800 }
             }
           }
         ]
       },
-      devOptions: {
-        enabled: false
-      }
+      devOptions: { enabled: false }
     }),
     visualizer({ open: false, filename: 'dist/stats.html' }),
   ],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+    alias: { '@': path.resolve(__dirname, './src') },
   },
   server: {
     port: Number(process.env.PORT) || 5173,
@@ -95,15 +71,9 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-router-dom')) {
-              return 'react-vendor'
-            }
-            if (id.includes('recharts')) {
-              return 'charts-vendor'
-            }
-            if (id.includes('lucide-react') || id.includes('clsx')) {
-              return 'ui-vendor'
-            }
+            if (id.includes('react') || id.includes('react-router-dom')) return 'react-vendor'
+            if (id.includes('recharts')) return 'charts-vendor'
+            if (id.includes('lucide-react') || id.includes('clsx')) return 'ui-vendor'
           }
         },
       },
